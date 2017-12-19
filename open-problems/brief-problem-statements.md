@@ -1,12 +1,15 @@
 The most important problems/technologies relevant to Protocol Labs that will/should exist 5-10 years from now:
 
+#### Important problems to solve:
 - certifiable archives (.car)
 - anonymous, private connectivity
 	- distinction between ephemeral and permanent IDs
 - better congestion control
-- libp2p as a service (on your computer)
 - better DHTs
 	- lower latency, more secure
+
+#### Important technologies to build: 
+- libp2p as a service (on your computer)
 - packet switching
 	- make libp2p packet oriented instead of stream oriented (currently streams on packets on streams on packets)
 
