@@ -1,7 +1,6 @@
 The most important problems/technologies relevant to Protocol Labs that will/should exist 5-10 years from now:
 
 #### Important problems to solve:
-- certifiable archives (.car)
 - anonymous, private connectivity
 	- distinction between ephemeral and permanent IDs
 - better congestion control
