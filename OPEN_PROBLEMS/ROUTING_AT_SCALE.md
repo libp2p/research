@@ -1,6 +1,9 @@
 # Routing at Scale (1M, 10M, 100M, 1B.. nodes)
 
-## Description
+## Short Description
+> In one sentence or paragraph.
+
+## Long Description
 
 ## State of the Art
 
