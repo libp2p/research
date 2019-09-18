@@ -1,7 +1,9 @@
 # PubSub at Scale
 
-## Description
+## Short Description
+> In one sentence or paragraph.
 
+## Long Description
 
 
 ## State of the Art
