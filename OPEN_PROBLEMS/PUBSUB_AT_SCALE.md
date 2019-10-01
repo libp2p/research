@@ -96,7 +96,7 @@ As mentioned earlier, there are several tradeoffs at play in the design of the s
 
 - *Authentication:* Whether a pubsub system is open to the public or not, there needs to be some authentication to those that publish to specific topics/channels. As such, there has been discussion (e.g., in https://github.com/ipfs/notes/issues/236) about a pubsub authentication API. According to this, every topic is signed by a public key. Anyone can subscribe to this key, but those that want to publish information to this key/topic need to sign the content with the corresponding private key. In case of a private pubsub system, content can be encrypted and the corresponding keys to decrypt the content should be shared with those that are allowed access to the topics. *Content published in pubsub systems need to be authenticated and in case of a private pubsub system the content itself needs to be encrypted using authenticated encryption.*
 
-- *Scalability:*
+- *Scalability:* The ultimate issue that comprises a challenge of its own is to be able to scale up and support orders of magnitude more users/nodes. As more nodes join the system, both bandwidth and networking resources increase accordingly. That said, the scalability challenge encompasses all of the issues discussed above. *A sophisticated pubsub system should be able to support orders of magnitude more nodes, but at the same time take care of load-balancing between nodes and latency requirements of corresponding applications.*
 
 ### What is the impact
 
