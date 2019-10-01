@@ -9,7 +9,7 @@ Publish/Subscribe (pubsub) messaging systems have been proposed and traditionall
 
 Pubsub systems are a subgroup of broadcast trees, according to which, once messages are published, they are broadcast to all nodes in the tree. Although broadcast can ensure timely delivery of messages to all receipients, it causes severe stress to the system in terms of bandwidth needed to deliver the messages.
 
-One of the main benefits of pubsub systems is that receivers of information (or subscribers) can individually pull information when they need to. This reduces a lot strain in the system to deliver messages as they are published. However, in case of large-scale systems, the overhead of publishing information to a topic can still overload the system.
+One of the main benefits of pubsub systems is that receivers of information (or subscribers) can individually pull information when they need to. This reduces a lot the strain put in the system to deliver messages as they are published. However, in case of large-scale systems, the overhead of publishing information to a topic can still overload the system.
 
 ## State of the Art
 
@@ -26,15 +26,28 @@ One of the main benefits of pubsub systems is that receivers of information (or 
 
 <strong> Gossip Protocols </strong>
 
-Gossipsub is a gossip-based pubsub system developed within libp2p. The concept behind gossiping is to address the issue of load-balancing between all nodes forwarding messages in the system. According to gossiping, once a node receives a message, it does not broadcast the message directly to all nodes subscribed to some topic, but instead it is choosing a fraction of nodes (we can use *t* to denote the number of nodes chosen) to distribute the message. In turn, those *t* nodes are choosing a further *t* nodes to distribute the message further. Clearly, receiving the message more than once is perfectly possible in gossiping systems. If a node receives a message twice, it discards the second (and any subsequent) message it receives.
+Gossipsub is a gossip-based pubsub system developed within libp2p. Gossipsub borrows concepts from related literature (see list below) and blends them together to produce an efficient pubsub protocol. Traditionally, the concept behind gossiping is to address the issue of load-balancing between all nodes forwarding messages in the system. According to gossiping, once a node receives a message, it does not broadcast the message directly to all nodes subscribed to some topic, but instead it is choosing a fraction of nodes (we can use *t* to denote the number of nodes chosen) to distribute the message. In turn, those *t* nodes are choosing a further *t* nodes to distribute the message further. Clearly, receiving the message more than once is perfectly possible in gossiping systems. If a node receives a message twice, it discards the second (and any subsequent) message it receives.
 
-The intrinsic redundancy inserted in the system through gossiping is improving the resilience of the system. However, in order to operate according to those rules, every node in the system has to keep membership information for the entire system. Although gossip-based protocols reduce the stress put in the system in terms of bandwidth and connectivity requirements, it clearly poses scalability concerns due to the state that all nodes need to keep.
+The intrinsic redundancy inserted in the system through gossiping is improving the resilience of the system. At the same time, in order to maintain redundancy, every node in the system has to keep membership information for the entire system. Although gossip-based protocols reduce the stress put in the system in terms of bandwidth and connectivity requirements, it clearly poses scalability concerns due to the state that all nodes need to keep.
 
 In order to overcome those issues, several gossip systems implement what is called *partial views*, according to which the following strategies can be used to propagate messages throughout the network:
 
 - <strong> Eager push: </strong> This is the traditional approach, where once nodes receive a message they forward the message (together with its payload) to a random set of *t* peers.
 - <strong> Pull: </strong> Nodes interested in a set of topics periodically send request messages to random nodes to inquire about newly received messages. If queried nodes have updates in the topic specified by the subscriber node, they forward the message to this nodee.
 - <strong> Lazy push: </strong> When a node (from within the *t* group of another node) receives a message, it forwards a message identifier (i.e., *not the payload of the message*) to a number of random peers. If those nodes have not already received the message, they send a subsequent pull request to get the full payload of the message.
+
+*Tradeoffs*
+
+As usual with most communication systems, there are tradeoffs in the design choices, which affect the performance and resilience of the system. Inserting more traffic in the system (e.g., *eager push*) increases bandwidth requirements, but achieve higher reliability and lower latency. On the other hand, more relaxed approaches (e.g., *lazy push*) reduce both bandwidth requirements, but also load on end nodes.
+
+Related Literature
+
+- Epidemic Broadcast Trees, 2007, DOI: 10.1109/SRDS.2007.27, http://www.gsd.inesc-id.pt/~ler/docencia/rcs1617/papers/srds07.pdf
+- HyParView: a membership protocol for reliable gossip-based broadcast, 2007, DOI: 10.1109/DSN.2007.56, http://asc.di.fct.unl.pt/~jleitao/pdf/dsn07-leitao.pdf
+- GoCast: Gossip-enhanced Overlay Multicast for Fast and Dependable Group Communication, 2005, http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.75.4811&rep=rep1&type=pdf
+- Exposing and eliminating vulnerabilities to denial of service attacks in secure gossip-based multicast, DSN 2004
+- Emergent structure in unstructured epidemic multicast, DSN 2007
+
 
 ##### peer-base collaboration messaging protocol (Dias Peer Set)
 
@@ -75,12 +88,19 @@ Related Literature
 
 ## Solving this Open Problem
 
-- Load-balancing
+As mentioned earlier, there are several tradeoffs at play in the design of the system. Those tradeoffs are made more serious as scalability requirements come into the picture, that is, as the protocols is requested to serve orders of magnitude more users and more pubsub topics. Below, we provide a very brief description of the main issues that a sophisticated pubsub protocol needs to be able to deal with.
+
+- Load-balancing: Keeping membership state and forwarding pubsub messages is loading both the memory and communication/networking requirements of a node. This is especially so for p2p systems, where end-nodes are not necessarily powerful servers. Furthermore, as some content is becoming popular, more load is put on the nodes that are relaying those messages. *A sophisticated (gossiping) pubsub protocol needs to be able to balance load among nodes.*
+- Latency: Some applications require that messages are delivered to all nodes subscribed to a topic with the least possible delay. As pubsub systems are built as overlays on top of the physical Internet infrastructure, the underlying hop-count does not necessarily correspond to the overlay picture. Furthermore, approaches such as "eager-push" or "flooding" can reduce the delivery latency, but increase bandwidth requirements.
 - Authentication
 - Scalability
-- Latency
 
 ### What is the impact
+
+As the IPFS network grows and dependency on underlying libp2p (and supporting protocols) intensifies, we need to make sure that the design of the protocols is able to scale up and maintain performance.
+
+- Where is gossipsub used within libp2p/IPFS?
+- Which external systems use gossipsub?
 
 ### What defines a complete solution?
 > What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
