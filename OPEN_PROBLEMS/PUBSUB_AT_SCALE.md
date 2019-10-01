@@ -90,10 +90,13 @@ Related Literature
 
 As mentioned earlier, there are several tradeoffs at play in the design of the system. Those tradeoffs are made more serious as scalability requirements come into the picture, that is, as the protocols is requested to serve orders of magnitude more users and more pubsub topics. Below, we provide a very brief description of the main issues that a sophisticated pubsub protocol needs to be able to deal with.
 
-- Load-balancing: Keeping membership state and forwarding pubsub messages is loading both the memory and communication/networking requirements of a node. This is especially so for p2p systems, where end-nodes are not necessarily powerful servers. Furthermore, as some content is becoming popular, more load is put on the nodes that are relaying those messages. *A sophisticated (gossiping) pubsub protocol needs to be able to balance load among nodes.*
-- Latency: Some applications require that messages are delivered to all nodes subscribed to a topic with the least possible delay. As pubsub systems are built as overlays on top of the physical Internet infrastructure, the underlying hop-count does not necessarily correspond to the overlay picture. Furthermore, approaches such as "eager-push" or "flooding" can reduce the delivery latency, but increase bandwidth requirements.
-- Authentication
-- Scalability
+- *Load-balancing:* Keeping membership state and forwarding pubsub messages is loading both the memory and communication/networking requirements of a node. This is especially so for p2p systems, where end-nodes are not necessarily powerful servers. Furthermore, as some content is becoming popular, more load is put on the nodes that are relaying those messages. *A sophisticated (gossiping) pubsub protocol needs to be able to balance load among nodes.*
+
+- *Latency:* Some applications require that messages are delivered to all nodes subscribed to a topic with the least possible delay. As pubsub systems are built as overlays on top of the physical Internet infrastructure, the underlying hop-count does not necessarily correspond to the overlay picture. Furthermore, approaches such as "eager-push" or "flooding" can reduce the delivery latency, but increase bandwidth requirements.
+
+- *Authentication:* Whether a pubsub system is open to the public or not, there needs to be some authentication to those that publish to specific topics/channels. As such, there has been discussion (e.g., in https://github.com/ipfs/notes/issues/236) about a pubsub authentication API. According to this, every topic is signed by a public key. Anyone can subscribe to this key, but those that want to publish information to this key/topic need to sign the content with the corresponding private key. In case of a private pubsub system, content can be encrypted and the corresponding keys to decrypt the content should be shared with those that are allowed access to the topics. *Content published in pubsub systems need to be authenticated and in case of a private pubsub system the content itself needs to be encrypted using authenticated encryption.*
+
+- *Scalability:*
 
 ### What is the impact
 
