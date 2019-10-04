@@ -42,7 +42,7 @@ In parallel to the initial development of IPFS and libp2p, there has been a para
 
 A number of projects have since emerged (in the US, Europe and Asia) to investigate the properties of a content-centric network, where content itself is the addressable and routable primitive and to build a scalable, efficient and secure Future Internet Architecture. The work has (mostly) assumed that this future Internet architecture will build on top of IP and will involve in-network routing and forwarding entities (i.e., network routers), which will be able to “speak” ICN language and related protocols.
 
-<strong> 1) Named Data Networking (NDN) </strong>
+1) Named Data Networking (NDN)
 
 NDN is a US-driven project, which however is attracting attention worldwide. NDN follows a “name-based routing” approach, where names are hierarchical and routers do longest-prefix matching to find the next node to forward the request to. This is the most radical of the ICN architectures, which assumes that routers in the network (or at least some of them) understand the NDN stack and support in-network content caching. Although it comes with several challenges (e.g., scaling the routing table size), its expected benefits are significant, being able to natively support client mobility, in-network caching and multicast. 
 
@@ -51,7 +51,7 @@ Material: 
 - Original 2009 paper: https://named-data.net/publications/networkingnamedcontent/ 
 - Follow up 2014 paper: https://named-data.net/publications/named_data_networking_ccr/ 
 
-<strong> 2) DONA: Data-Oriented (and beyond) Network Architecture </strong>
+2) DONA: Data-Oriented (and beyond) Network Architecture
 
 DONA is a 2007 ACM SIGCOMM paper, which advocates a hierarchical data resolution structure, where there is at least one “resolution handler” in each ISP domain. Names are structured according to the form P:L, where P is the cryptographic hash of the principal’s (publisher’s) public key and L is a label given by the principal/publisher which needs to ensure that names are unique. Given the hierarchical structure of the architecture, a challenge for DONA is the stress on the top-level resolution-handler (assuming we’re addressing the entire Internet). 
 
@@ -59,7 +59,7 @@ Material: 
 
 - Paper: http://ccr.sigcomm.org/online/files/fp177-koponen1.pdf  
 
-<strong> 3) NetInf: Network of Information </strong>
+3) NetInf: Network of Information
 
 NetInf is the outcome of an EU project (which ended around 2015 or so) which resembles a lot the IPFS structure. NetInf is building on name-resolution-based routing (through a Name-Resolution System - NRS). The NRS is a multi-level DHT and results have reported that the architecture can scale to several millions of nodes with lookup latencies of less than 100ms. 
 
