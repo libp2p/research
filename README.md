@@ -13,6 +13,10 @@ We break down a few of the Key Open Problems of high priority for the project in
 **List:**
 - Currently all in [PRs](https://github.com/libp2p/research/pulls)
 
+## Funding
+
+[Protocol Labs runs an RFP(Request For Proposals)](https://github.com/protocol/research-rfps) Program with the goal to fund individuals and groups to come up with novel solutions to the Open Problems found in this repo. If you are interested, consult the active RFPs at https://github.com/protocol/research-rfps
+
 ## Other Research Repos in this Org
  - [research-pubsub](https://github.com/libp2p/research-pubsub)
  - [research-dht](https://github.com/libp2p/research-dht)
