@@ -66,7 +66,35 @@ Volume 55, September 2015, Pages 1-23
 [A Survey on content-oriented networking for efficient content delivery](https://ieeexplore.ieee.org/abstract/document/5723809), IEEE Communications Magazine, DOI: 10.1109/MCOM.2011.5723809
 [A Survey of Peer-to-Peer Security Issues](https://www.cs.rice.edu/~dwallach/pub/tokyo-p2p2002.pdf), 2003.
 
+1) CAN: Content Addressable Network (2001)
 
+CAN was one of the first proposals in the area of content-addressable space and made use of DHTs, but with the distinct feature (as compared to those that followed) that the in the DHT nodes were not arranged in rings, but rather in a virtual multi-dimensional Cartesian coordinate space. CAN has been radical in its design when proposed with very promising performance, but it is not resilient under network partitions, it does not handle well load-balancing between nodes and in order to deal with churn a node needs to have many neighbours in the same in the overlay neighbour set.
+
+S.  Ratnasamy,  P.  Francis,  M.  Handley,  R.  Karp,  and  S.  Shenker,  [“A scalable  content  addressable  network”](https://people.eecs.berkeley.edu/~sylvia/papers/cans.pdf), In Processings of the ACM SIGCOMM, 2001, pp. 161–172
+
+2) Chord (2003)
+
+Chord is also one of the very early proposals that use DHTs, but is building on consistent hashing to allocate keys to the peers forming the ring. By using consistent hashing, Chord can deal effectively with load-balancing between nodes, as well as limited churn rates. It has been shown to drop in performance under increased churn rates, as well as sub-optimal look-up times.
+
+I. Stoica, R. Morris, D. Karger, M. F. Kaashoek, and H. Balakrishnan,[“Chord:  A  scalable  peer-to-peer  lookup  protocol  for  internet  applications”](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf), IEEE/ACM Transactions on Networking, vol. 11, no. 1, pp. 17–32, 2003.
+
+3) Pastry (2001) & Tapestry (2004)
+
+Both Pastry and Tapestry use the Plaxton (1997) prefix routing scheme to provide scalable routing and take into account network locality. Pastry has been shown to scale well to six-figure network sizes, which has been a remarkable figure for the time (circa 2000), but not so much so for present-day deployments. Dealing with node churn is also not one of the strong points of Pastry. Tapestry improves performance in terms of scalability, network locality (as it applies redundancy) and fault tolerance, at least as compared to Pastry.
+
+A. Rowstron and P. Druschel, [Pastry: Scalable, decentralized object location and routing for large-scale peer-to-peer systems](https://www.cs.rice.edu/~druschel/publications/Pastry.pdf), in Proceedingsof the Middleware, 2001.
+
+B. Y. Zhao, L. Huang, J. Stribling, S. C. Rhea, A. D. Joseph, and J. D. Kubiatowicz,  [“Tapestry:  A  resilient  global-scale  overlay  for  service deployment”](https://www.srhea.net/papers/tapestry_jsac.pdf), IEEE  Journal  on  Selected  Areas  in  Communications,vol. 22, no. 1, pp. 41–53, January 2004.
+
+C. Plaxton, R. Rajaraman, and A. Richa, [“Accessing nearby copies ofreplicated objects in a distributed environment,”](https://dl.acm.org/citation.cfm?id=258523), in Proceedings of the 9th Annual ACM Symposium on Parallel Algorithms and Architectures,1997 [slides](http://homepage.divms.uiowa.edu/~ghosh/8.Plaxton.pdf)
+
+4) Kademlia
+
+Kademlia takes the novel approach of assigning nodes with PeerIDs and stores content items to nodes whose PeerIDs are _close_ to Content IDs. _Close_ here is defined as the XOR difference between the PeerID and the ContentID. This way, the NodeID is used by the routing algorithm to get to the node that stores the requested content. Kademlia performs in _O(logN)_ in terms of resource discovery and although it does not have any clear performance benefits in terms of network locality, or scalability, it has been the most widely-used protocol in real systems (e.g., BitTorrent).
+
+_Summary:_ The above are just some of the most popular proposals for structured P2P overlay systems. There have been many more proposals that have tried to optimise in one of the many challenges, i.e., scalability, churn, look-up time (see above-referenced surveys for many more references). However, as the Internet has grown exponentially over the past decades, the requirements of today's systems demand much more than those proposals can realistically offer to systems such as IPFS/libp2p, where: i) networks size is already above 100,00k active daily nodes, ii) node churn can be huge, and, iii) end-users expect look-up and delivery times an order of magnitude less than those expected when the above protocols were proposed.
+
+In order to address those issues, but at the same time aligning with the dominant content-addressability line of work, below we discuss newer proposals, in the direction of Information- or Content-Centric Networks. These proposals fundamentally have much wider scope (exploiting in-network entities and attempting to build new Internet-wide architectures) and as such can be a great source of inspiration for the IPFS and libp2p ecosystems.
 
 
 ** Information-/Content-Centric Networks **
