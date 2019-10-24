@@ -38,7 +38,7 @@ As a system that is expected to provide *timely delivery* of content to users, I
 
 ## State of the Art
 
-> This survey on the State of the Art is not by any means complete, however, it should provide a good entry point to learn what are the existing work. If you have something that is fundamentally missing, please consider submitting a PR to augment this survey. 
+> This survey on the State of the Art is by no means complete, however, it should provide a good entry point to learn what is the existing work. If you have something that is fundamentally missing, please consider submitting a PR to augment this survey. 
 
 ### Within the libp2p Ecosystem
 > Existing attempts and strategies
@@ -49,10 +49,27 @@ In the wider IPFS, libp2p and IPLD systems, each of the components is taking car
 - IPFS: takes care of the “content to location mapping” (i.e., CID to peerID) through DHT
 - libp2p: takes care of building the path from peerID to the IP address of the node (using protocols such as pubsub/gossipsub and bitswap).
 
-The current version of the system is using a single DHT for all content published in IPFS and even within individual IPFS Clusters. Although this has been working fine up until now, it is expected to face scalability problems as the system is scaling up and attracting more users and orders of magnitude more traffic. Furthermore, as a system that is expected to provide timely delivery of content to users, IPFS needs to take into account topological characteristics of stored content and resolve the closest possible copies. Closest can be defined both as number of network hops, but also as a round-trip delay.
+As mentioned earlier, the current version of the system is using a *single DHT* for all content published in IPFS. The system is building on the **Kademlia DHT**. Although other DHT versions have been discussed, there was not enough consensus to suggest *significantly improved performance* in order to shift to some other DHT proposal. Apart from the DHT, libp2p is also implementing a pubsub protocol, which is based on gossiping and acronymed [gossipSub](https://github.com/libp2p/specs/tree/master/pubsub/gossipsub). GossipSub and its optimisation [episub](https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/episub.md) can be used independently from the DHT for content routing, although gossipSub is currently not used for this purpose in libp2p.
+
+There has also been discussion within the libp2p and IPFS ecosystems for a *Multi-Layer DHT*, where different layers would cover different topics or applications, or different geographical areas by topologically embedding the structure of the DHT over the physical underlying network. The ultimate target in all those cases is to **reduce the content look-up time by reducing the number of underlying network hops that requests and content has to travel**.
 
 ### Within the broad Research Ecosystem
 > How do people try to solve this problem?
+
+** Structured P2P Overlays **
+
+Peer-to-Peer networks have received tremendous attention by the networking research community in the last 15 years or so, with interest generally declining over time. As discussed earlier, P2P networks have generally been divided in two main categories: "structured" and "unstructured". Here we will focus on structured P2P overlay networks, as the P2P system implemented in libp2p falls in this category and would not see any performance benefit if it moved to an unstructured network. We will briefly survey the most prominent proposals for routing in structured P2P networks, where the dominating approach has always been the use of a DHT table. The specifics of the DHT table itself as well as the structure of the overall system differentiates the proposals in terms of features and performance. For a comprehensive review of P2P Overlay Networks you are strongly encouraged to look at the following papers:
+
+[A Survey and Comparison ofPeer-to-Peer Overlay Network Schemes](http://snap.stanford.edu/class/cs224w-readings/lua04p2p.pdf), IEEE Communications Surveys & Tutorials, March 2004
+[State-of-the-art survey on P2P overlay networks in pervasive computing environments](https://www.sciencedirect.com/science/article/pii/S1084804515000879), Journal of Network and Computer Applications
+Volume 55, September 2015, Pages 1-23
+[A Survey on content-oriented networking for efficient content delivery](https://ieeexplore.ieee.org/abstract/document/5723809), IEEE Communications Magazine, DOI: 10.1109/MCOM.2011.5723809
+[A Survey of Peer-to-Peer Security Issues](https://www.cs.rice.edu/~dwallach/pub/tokyo-p2p2002.pdf), 2003.
+
+
+
+
+** Information-/Content-Centric Networks **
 
 In parallel to the initial development of IPFS and libp2p, there has been a parallel stream of work mainly driven by the academic and research community to shift the focus from host-based networking to content- or information-centric networking (CCN/ICN). Most of the work kicked off around 2006, mainly from Van Jacobson and in the form of talks - see [1] for a very inspiring talk by Van Jacobson. This later materialised in several papers and is still going on today under the umbrella of the Named-Data Networking project (see below).
 
