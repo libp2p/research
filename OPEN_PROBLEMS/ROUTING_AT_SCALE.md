@@ -56,7 +56,7 @@ There has also been discussion within the libp2p and IPFS ecosystems for a *Mult
 ### Within the broad Research Ecosystem
 > How do people try to solve this problem?
 
-** Structured P2P Overlays **
+**Structured P2P Overlays**
 
 Peer-to-Peer networks have received tremendous attention by the networking research community in the last 15 years or so, with interest generally declining over time. As discussed earlier, P2P networks have generally been divided in two main categories: "structured" and "unstructured". Here we will focus on structured P2P overlay networks, as the P2P system implemented in libp2p falls in this category and would not see any performance benefit if it moved to an unstructured network. We will briefly survey the most prominent proposals for routing in structured P2P networks, where the dominating approach has always been the use of a DHT table. The specifics of the DHT table itself as well as the structure of the overall system differentiates the proposals in terms of features and performance. For a comprehensive review of P2P Overlay Networks you are strongly encouraged to look at the following papers:
 
@@ -97,7 +97,7 @@ _Summary:_ The above are just some of the most popular proposals for structured 
 In order to address those issues, but at the same time aligning with the dominant content-addressability line of work, below we discuss newer proposals, in the direction of Information- or Content-Centric Networks. These proposals fundamentally have much wider scope (exploiting in-network entities and attempting to build new Internet-wide architectures) and as such can be a great source of inspiration for the IPFS and libp2p ecosystems.
 
 
-** Information-/Content-Centric Networks **
+**Information-/Content-Centric Networks**
 
 In parallel to the initial development of IPFS and libp2p, there has been a parallel stream of work mainly driven by the academic and research community to shift the focus from host-based networking to content- or information-centric networking (CCN/ICN). Most of the work kicked off around 2006, mainly from Van Jacobson and in the form of talks - see [1] for a very inspiring talk by Van Jacobson. This later materialised in several papers and is still going on today under the umbrella of the Named-Data Networking project (see below).
 
@@ -138,30 +138,35 @@ Surveys on the topic
 ### Known shortcommins of existing solutions
 > What are the limitations on those solutions?
 
-All of the above-mentioned approaches are facing scalability issues. This is primarily due to the vast amount of content items that need to be reachable. At the same time, we should not forget that most of the research proposals are targeting the wider Internet as a future network architecture, which is expected to gradually replace host-based networking. There have been several proposals to scale those systems, such as for instance:
+All of the above-mentioned approaches, both in P2P and in the ICN space are facing scalability issues. This is primarily due to the vast amount of content items that need to be reachable. In the case of P2P systems, the proposals discussed above were modelling systems with less users and much less traffic. Since then (early 2000s), the Internet, both in terms of numbers of connected nodes and in terms of volume of data, has grown tremendously. IPFS for instance is already counting more users in the order of hundreds of thousands and is not considered one of the very big systems of today.
 
-- On Demand Routing for Scalable Name-Based Forwarding, https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final53.pdf
-- A Note on Routing Scalability in Named Data Networking, https://named-data.net/wp-content/uploads/2019/08/zhang2019a-note.pdf
+On the other hand, and in the case of Information-Centric Networking proposals, we should not forget that most of the research proposals are targeting the whole of the Internet as a future network architecture that is expected to gradually replace host-based networking. That said, this set of proposals is aiming at massive scale adoption and is tested and evaluated against such deployments. This fact makes proposals in this space attractive to consider for systems such as IPFS, since scalability problems when attempting to address the Internet are not necessarily seen in distributed storage systems such as IPFS. Nevertheless, there have been several proposals to scale ICN architectures, which are also worth considering:
+
+- [On Demand Routing for Scalable Name-Based Forwarding](https://conferences.sigcomm.org/acm-icn/2018/proceedings/icn18-final53.pdf), ACM ICN 2018.
+- [A Note on Routing Scalability in Named Data Networking](https://named-data.net/wp-content/uploads/2019/08/zhang2019a-note.pdf), 2017
 
 ## Solving this Open Problem
 
 In terms of scalability, a Multi-Layer DHT should be constructed, which should ideally be topologically embedded, meaning that the nodes participating in one DHT should be geographically and (therefore) topologically close to each other.
 
-In addition to the name-resolution based system currently deployed (through the DHT system), we should involve an element of name-based routing (where possible) in order to avoid hitting the DHT with every request. Recall that DHTs are by design stochastically suboptimal, as the overlay structure does not necessarily represent the network topology (i.e., one hop on the DHT could translate to tens of network-layer router hops) and therefore delivery delay increases.
+In addition to the name-resolution based system currently deployed (through the DHT system), we should involve an element of name-based routing (where possible) in order to avoid hitting the DHT with every request. This could be an extension of the IPFS gateway, or a proposal for a separate network entity. Recall that DHTs are by design stochastically suboptimal, as the overlay structure does not necessarily represent the network topology (i.e., one hop on the DHT could translate to tens of network-layer router hops) and therefore delivery delay increases.
 
-A very recent related paper discussing those issues is here: https://conferences.sigcomm.org/acm-icn/2019/proceedings/icn19-34.pdf
+A very recent related paper discussing those issues is here:
+[Towards Peer-to-Peer Content Retrieval Markets:Enhancing IPFS with ICN](https://conferences.sigcomm.org/acm-icn/2019/proceedings/icn19-34.pdf), ACM ICN 2019.
 
 ### What is the impact
 
-Solving routing scalability for IPFS and libp2p is of utmost importance. As the network grows and more traffic is inserted in the system, a single DHT is unlikely to perform according to expectations.
+Solving routing scalability for IPFS and libp2p is of utmost importance. As the network grows and more traffic is inserted in the system, a single DHT is unlikely to perform according to expectations. This will reduce user expectations and user satisfaction and can become a show-stopper for wider adoption.
 
 ### What defines a complete solution?
 > What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
 
-A complete solution here should involve the following elements:
+- The system should **scale to tens of millions of active and reachable nodes**. Routing scalability should be demonstrated through the right metrics, one of which should be look-up delay.
+- The proposed algorithms should **account for both reduced look-up time but also reduced delivery delay**. In this respect, IPFS should not only be seen as a storage system, but also as a _timely content delivery network_, similar in nature to present-day CDNs (without necessarily targetting similar SLAs though). _Smart content replication and caching_ should therefore be considered in order to achieve those goals.
+- The system should be **able to deal with churn in the order of hundreds of thousands of nodes**. When this volume of nodes leave the system, the routing algorithm should still be able to route to the requested content item. This includes both routing stability, but also content replication.
+- In all cases the system should be able to **guarantee 100% success in content resolution**, i.e., all content should be reachable at all times (even if look-up time is longer than usual).
+- The system should be **able to deal with sudden increase in traffic demand**, e.g., an order of magnitude more requests than normal. In dealing with increased demand, the system should be able to load-balance between nodes, i.e., not overload a few nodes when others are underutilised.
 
-- A Multi-Layer DHT, whose separate components are *topologically embedded* in the underlying topology
-- A *name-based routing* element in addition to the existing name-resolution-based system (i.e., DHT). This could be an extension of the IPFS gateway, or a proposal for a separate network entity.
 
 ## Other
 
