@@ -56,7 +56,7 @@ There has also been discussion within the libp2p and IPFS ecosystems for a *Mult
 ### Within the broad Research Ecosystem
 > How do people try to solve this problem?
 
-**Structured P2P Overlays**
+#### Structured P2P Overlays
 
 Peer-to-Peer networks have received tremendous attention by the networking research community in the last 15 years or so, with interest generally declining over time. As discussed earlier, P2P networks have generally been divided in two main categories: "structured" and "unstructured". Here we will focus on structured P2P overlay networks, as the P2P system implemented in libp2p falls in this category and would not see any performance benefit if it moved to an unstructured network. We will briefly survey the most prominent proposals for routing in structured P2P networks, where the dominating approach has always been the use of a DHT table. The specifics of the DHT table itself as well as the structure of the overall system differentiates the proposals in terms of features and performance. For a comprehensive review of P2P Overlay Networks you are strongly encouraged to look at the following papers:
 
