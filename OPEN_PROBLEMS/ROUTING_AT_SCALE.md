@@ -97,7 +97,7 @@ _Summary:_ The above are just some of the most popular proposals for structured 
 In order to address those issues, but at the same time aligning with the dominant content-addressability line of work, below we discuss newer proposals, in the direction of Information- or Content-Centric Networks. These proposals fundamentally have much wider scope (exploiting in-network entities and attempting to build new Internet-wide architectures) and as such can be a great source of inspiration for the IPFS and libp2p ecosystems.
 
 
-**Information-/Content-Centric Networks**
+#### Information-/Content-Centric Networks
 
 In parallel to the initial development of IPFS and libp2p, there has been a parallel stream of work mainly driven by the academic and research community to shift the focus from host-based networking to content- or information-centric networking (CCN/ICN). Most of the work kicked off around 2006, mainly from Van Jacobson and in the form of talks - see [1] for a very inspiring talk by Van Jacobson. This later materialised in several papers and is still going on today under the umbrella of the Named-Data Networking project (see below).
 
