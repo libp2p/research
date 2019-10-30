@@ -176,8 +176,6 @@ As mentioned earlier, there are several tradeoffs at play in the design of the s
 
 As the IPFS network grows and dependency on underlying libp2p (and supporting protocols) intensifies, we need to make sure that the design of the protocols is able to scale up and maintain performance.
 
-- Where is gossipsub used within libp2p/IPFS?
-- Which external systems use gossipsub?
 
 ### What defines a complete solution?
 > What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
@@ -197,6 +195,13 @@ Support for multiple times of usage:
 - Video Broadcast
 
 ## Other
+
+Here are some other systems that use pub/sub:
+
+https://www.w3.org/TR/activitypub https://activitypub.rocks/
+https://xmpp.org/extensions/xep-0060.html
+https://github.com/tootsuite/mastodon
+https://www.scuttlebutt.nz/ (uses a gossip strategy)
 
 ### Existing Conversations/Threads
 
