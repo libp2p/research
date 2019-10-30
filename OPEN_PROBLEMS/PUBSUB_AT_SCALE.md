@@ -3,13 +3,38 @@
 ## Short Description
 > In one sentence or paragraph.
 
-Publish/Subscribe (pubsub) messaging systems have been proposed and traditionally used to disintermediate senders and receivers of messages. That is, in pubsub systems, publishers of content do not send the published messages directly to one or a group of receivers, but instead *publishers are sending messages to a topic.* This enhances asynchronous communication and reduces tremendously network traffic and bandwidth-requirements.
+Publish/Subscribe (pub/sub) messaging systems have been proposed and traditionally used to disintermediate senders and receivers of messages. That is, in pub/sub systems, publishers of content do not send the published messages directly to one or a group of receivers, but instead *publishers are sending messages to a topic.* The pub/sub system then needs to match subscribers' interests to published messages, or more commonly known, events. This model of communication enhances asynchronous communication and reduces tremendously network traffic and bandwidth-requirements.
+
+*Within the IPFS and libp2p ecosystetms, pub/sub is being used to push naming record updates to the decentralised Naming System of IPFS, acronymed IPNS* (https://docs.ipfs.io/guides/concepts/ipns/). As the IPFS system is evolving and growing, communicating new entries to the IPNS is becoming an issue *due to the increased network and node load requirements*. The expected growth of the system to *multiple millions of nodes is going to create significant performance issues*, which might render the system unusable. Despite the significant amount of related literatture on the topic of pub/sub, very few systems have been tested to that level of scalability, while those that have been are mostly cloud-based, managed and structured infrastructures. Instead, in the case of IPNS (and IPFS more in general), *the network is totally decentralised and therefore unamanged*. This poses new challenges to the pub/sub protocol, which we want to explore through this RFP.
 
 ## Long Description
 
-Pubsub systems are a subgroup of broadcast trees, according to which, once messages are published, they are broadcast to all nodes in the tree. Although broadcast can ensure timely delivery of messages to all receipients, it causes severe stress to the system in terms of bandwidth needed to deliver the messages.
+**P2P Overlays**
+
+By and large, peer-to-peer (P2P) networks can be split in two categories: *i) structured P2P overlays* and *ii) unstructured P2P overlays*. In structured P2P overlays (or networks), the network has some structure, e.g., it is based on some topological or node hierarchy. In such cases, some nodes (often called Super Nodes) can be assigned more responsibilities than others, such as for example, relay published events to subscribed nodes. Those nodes are also assumed to be dedicated servers, hence, they do not present disconnection issues and can support routing of pub/sub messaging and other operations related to the pub/sub system.
+
+Unstructured (or unmanaged) P2P overlay networks, on the other hand, *do not assume any topological structure or connectivity properties for any of its nodes*. That is, in unstructured P2P networks, nodes can be of any type (i.e., from always-on rack servers, to ephemerally connected laptops and mobile devices) and thus, connect and disconnect at random times. These random connectivity patterns make it impossible to assign extra event routing or message caching responsibilities to any node in unstructured P2P networks. In turn, designing message propagation and guaranteeing reliability of message delivery (that is, that a message will reach all nodes in the network within a given amount of time) is very difficult.
+
+**Pub/Sub Systems Overview**
+
+For the reasons mentioned above, unstructured P2P networks very often use pub/sub protocols that are closer to flooding, or random walks on the overlay to propagate event information. However, flooding is introducing a lot of extra traffic in the network, while random walks may take extended amounts of time before reaching all nodes.
+
+Some pub/sub systems have been implemented in the form of broadcast trees, according to which, once messages are published, they are broadcast to all nodes in the tree. Although broadcast can ensure timely delivery of messages to all receipients, they have questionable scalability properties, as the delay to notify subscribers increases linearly with the number of nodes. They also usually cause severe stress to the system in terms of bandwidth needed to deliver the messages and are prone to increased levels of churn.
 
 One of the main benefits of pubsub systems is that receivers of information (or subscribers) can individually pull information when they need to. This reduces a lot the strain put in the system to deliver messages as they are published. However, in case of large-scale systems, the overhead of publishing information to a topic can still overload the system.
+
+While previous work has addressed many different aspects and requirements of pub/sub design for structured P2P networks (see next Section on State of the Art), little has been done for unstructured P2P networks. For instance, aspects related to the relation between gossip levels and the scalability of the system have not been addressed thoroughly in prior art.
+
+**Pub/Sub in Unstructured P2P Overlay Systems**
+
+In distributed storage systems and in the case of the IPFS ecosystem in particular, pub/sub can be used for several purposes, including  content routing, i.e., one of the most central and vital functions of the system. IPFS is a content-addressable, distributed P2P storage network with hundreds of thousands of daily users. Users can participate in the network as unreliable nodes, e.g., using laptop devices and with frequent disconnections. The gossip-based pub/sub protocol used so far (acronymed "gossipsub" - see pointers below) was developed within Protocol Labs with those system and environment requirements in mind (i.e., unmanaged network and unreliable nodes) and is currently used to **push naming record updates to the decentralised naming system of IPFS, the InterPlanetary Naming System (IPNS)**.
+
+Pub/Sub and in particular gossipsub will also be used in the very near future by emerging P2P systems, such as the sharding version of the Ethereum Network (ETH2) and filecoin, as the main routing protocol.
+
+**Problem Statement**
+
+Most pub/sub systems that have been proposed before mostly have proven scalability properties in *managed and cloud-based environments*. Few pub/sub protocols have been proposed for unstructured P2P overlays and those that have, have rarely been tested with more than 10,000 nodes and high rates of churn. IPFS already has *hundreds of thousands of daily users and is expected to grow exponentially to multiple millions*. ETH1.0 already has more than 16,000 users and when ETH2.0 arrives this number is expected to rise by several orders of magnitute. Furthermore, systems such as ETH2 and filecoin are primarily financial systems and are expected to carry *transaction messages worth millions in monetary value*. That said, a *thorough evaluation of the performance of the existing protocol **or its redesign** is essential before it gets deploymed* in those systems. This is the goal that this project intends to pursue.
+
 
 ## State of the Art
 
@@ -107,6 +132,13 @@ As the IPFS network grows and dependency on underlying libp2p (and supporting pr
 
 ### What defines a complete solution?
 > What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
+
+
+In recent years, there has been significant momentum for design and deployment of decentralised Internet services and applications. Among others, such services include distributed and decentralised storage but also computation systems. The aim is to replace, or complement traditional centrally managed and operated cloud services. End-users are contributing part of their resources to the network and get rewarded according to contribution. These emerging systems are distributed in the sense of geographical spread and decentralised from the point of view of ownership, management and operation.
+
+We are, therefore, witnessing a trend towards building P2P overlays, where, in most cases, unreliable and non-dedicated end-user devices are active contributors to the network. In the absence of central control,  messaging in those systems is of utmost importance in order to communicate operational processes (e.g., find file or execute function), but also propagate management events.
+
+Pub/Sub has seen a surge in usage from distributed applications in the area of decentralised services, such as distributed chat, collaborative editing tools without a backend server, hosting of dynamic website content in unmanaged P2P networks, storage and synchronisation of evolving datasets, to name a few.
 
 Support for multiple times of usage:
 - Blog
