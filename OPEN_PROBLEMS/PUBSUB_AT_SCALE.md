@@ -40,26 +40,89 @@ Most pub/sub systems that have been proposed before mostly have proven scalabili
 
 > This survey on the State of the Art is not by any means complete, however, it should provide a good entry point to learn what are the existing work. If you have something that is fundamentally missing, please consider submitting a PR to augment this survey. 
 
-### Within the libp2p Ecosystem
-> Existing attempts and strategies
+General purpose pub/sub messaging systems can prove very useful from several different aspects (from management and operation to performance) in P2P networks and as such come with many tradeoffs. Due to the wide variety of applications building on top of pubsub systems, not all tradeoffs apply to all systems and many of them are contradictory to each other. Below, we discuss some of them.
 
-##### libp2p pubsub (floodsub, gossipsub & episub)
+**Reliable Delivery.** In case of no node downtime, all published messages should be delivered to all subscriber nodes. Pub/Sub systems should be *robust against node churn* and should still reach most nodes (i.e., achieve high hit rate). Fast recovery from churn is also a desirable feature.
+**Load Balancing.** The event message relay load should be roughly equally split between nodes. Assuming a scaled up system where nodes might be subscribed to 5K events, relaying messages is becoming a heavy task and therefore, the more nodes a node is connected to (in terms of degree), the more the relay tasks it will have to carry out.
+**Scalability.** Given the growth of networked systems, both in a cloud environment, but also in a P2P network, the system should be able to scale up to millions of nodes. There have been very few (if any) systems that achieved scalability of that order in unmanaged, P2P environments.
+**Resource-Efficient.** The system should avoid duplicate messages (i.e., deliver the same message to a node twice). This increases load on individual relay nodes, but also the overall system's bandwidth requirements.
 
-- https://github.com/libp2p/specs/blob/master/pubsub/README.md
-- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/README.md
-- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/episub.md
+**Striking the right balance, especially in an unmanaged, unstructured P2P overlay of massive scale has not seen a solution to date. This is the gap that we are looking to fill with the outcome of this project.**
+
+### Within the broad Research Ecosystem
+> How do people try to solve this problem?
+
+- We've collected a vast amount of Research Material around PubSub. It can be found at https://github.com/libp2p/research-pubsub. Please keep in mind that the literature in this space is vast. The purpose of this section is not to survey the majority of the proposals, but instead to point to the most important contributions from which lessons can be learned and applied to an unstructured, unmanaged, P2P pub/sub overlay.
+
+Related literature in the broader research community has worked towards two incarnations of pubsub systems: i) topic-based pub/sub and ii) content-based pub/sub.
+
+<strong> Topic-Based Pubsub </strong>
+
+In topic-based pubsub systems, subscribers declare interest in some topic. Publishers add/tag topics to their publication and those topics that match subscribers' interests are broadcast to them. Depending on the nature of the application running on top, topic-based pubsub can reduce the complexity of the system.
+
+Scalability in pub/sub systems was a key requirement in cloud environments, as cloud-based systems had to scale to accommodate demand. Amazon (Simple Notification Service, SNS) and Google/Firebase Cloud Messaging both have pub/sub protocols in operation, although their operational details have not been widely revealed.
+
+Scribe was one of the very first pub/sub systems that proposed a decentralised multicast overlay, on top of the Pastry DHT. DHTs have been used in several pub/sub systems (see Meghdoot, Bayeux), where in most cases the DHT is used to find where subscriptions are located and route to them (as in Meghdoot), or as a rendezvous point (as in Scribe) for a topic. Poldercast is an interesting approach which uses a ring overlay (and additional links as optimisation). Subscribers to a topic are connected to this ring and messages propagate to all other subscribers. Clearly, the latency to inform all nodes is increasing linearly, unless direct links exist and can be exploited. Dynatops was proposed as a self-configured topic-based pub/sub system which can deal with short-lived subscriptions. All these systems require a broker network that extends across a wide-area network to cover subscribers. Dynamoth was proposed to reduce latency as a hybrid between the dissintermediated pub/sub and the directly-connected client-server models. It is, however, exclusively applicable to cloud-based systems and not to P2P overlays.
+
+Systems such as Vitis, Tera and Rappel use gossiping to propagate information and build on unstructured P2P overlays. In particular, the authors in Vitis are arguing that most similar systems are building one separate overlay per topic, which results in nodes being members of an extensive number of overlays. This, in turn, increases overhead for relay nodes, which might get disincentivised and leave the system. In contrast, Vitis is dealing with this problem by bounding the number of connections per node. This is done by using gossip messages to sample the topics that other nodes have subscribed to. Then grouping nodes into the same overlay where topics overlap reduces the number of overlays needed, while at the same time keeping nodes subscribed to the topics of their choice.
+
+Rappel is targeting low overhead and noise to subscriber nodes, that is, receiving messages for topics that the node is not subscribed to. Rappel achieves that by building a network of "friends overlay" building on interest locality. Rappel also targets fast dissemination of messages by taking into account network locality on top of interest locality.
+
+While these have been very interesting approaches to gossip-based pub/sub for unstructured P2P overlays, none of them has been tested for scalability at massive scales (e.g., millions of nodes), or significant node churn. Rappel is claiming to be robust for up to 25% node churn, while Tera leaves this part for future evaluation.
+
+
+Related Literature
+
+- Amazon SND: https://aws.amazon.com/pub-sub-messaging/
+- Google/Firebase Cloud Messaging: https://firebase.google.com/docs/cloud-messaging/
+- Pastry: Scalable, decentralized object location androuting for large-scale peer-to-peer systems, http://rowstron.azurewebsites.net/PAST/pastry.pdf
+- Meghdoot: Content-Based Publish/Subscribeover P2P Networks, http://opendl.ifip-tc6.org/db/conf/middleware/middleware2004/GuptaSAA04.pdf
+- Bayeux: An Architecture for Scalable and Fault-tolerant Wide-area Data Dissemination, https://people.eecs.berkeley.edu/~adj/publications/paper-files/bayeux.pdf
+- PolderCast: Fast, Robust, and Scalable Architecture for P2P Topic-Based Pub/Sub, https://hal.archives-ouvertes.fr/hal-01555561
+- DYNATOPS: A Dynamic Topic-basedPublish/Subscribe Architecture, DEBS. pp. 75–86 (2013), https://www.ics.uci.edu/~yez/papers/dynatops_tr.pdf
+- Dynamoth: A Scalable Pub/Sub Middleware forLatency-Constrained Applications in the Cloud,  IEEE ICDCS 2015, http://preprints.juliengs.ca/2015/gascon2015dynamoth.pdf
+- Vitis: A Gossip-based Hybrid Overlay for Internet-scale Publish/SubscribeEnabling Rendezvous Routing in Unstructured Overlay Networks, https://dcatkth.github.io/papers/vitis.pdf
+- TERA: Topic-based Event Routing for peer-to-peer Architectures, https://www.ics.uci.edu/~hjafarpo/Files/PubSubPapers/DEBS2007/TERA.pdf
+- Rappel: Exploiting interest and network locality to improve fairness in publish-subscribe systems, http://dprg.cs.uiuc.edu/docs/rappel_journal/rappel_journal.pdf
+- Eugster, P.T., Felber, P.A., Guerraoui, R., Kermarrec, A.M.: The many faces of publish/subscribe. ACM Comput. Surv. 35(2), 114–131 (2003)
+
+
+
+<strong> Content-Based Pubsub </strong>
+
+In content-based pubsub, newly published content is tagged with a set of attribute/value pairs. In turn, subscriptions are expressed as predicates of the attributes. When predicates match attributes, the subscriber receives the information. Content-based pub/sub systems have been extensively studied in the past, but also more recently in the context of Information-Centric Networks. Generally speaking, content-based (or sometimes called attribute-based) pub/sub systems *can provide finer granularity matching between publishers and subscribers, but in order to achieve this they require more compute resources*. 
+
+BlueDove is one of the well-known approaches in this space. It supports multi-dimensional attributes and is organising overlay servers in a scalable topology. E-StreamHub is proposed as a middleware with the interesting feature that it adds and removes nodes based on their load. Both of these approaches are exclusively cloud-based and although they achieve scalability and low-latencies, they do not apply to unmanaged P2P networks. In fact, most content-based pub/sub systems either target cloud environments, or some broker-based infrastructure (see Elvin, Sienna, HERMES, Gryphon).
+
+
+Related literature
+
+- Enabling Publish/Subscribe in ICN, IRTF ICNRG Internet-Draft 2015, https://tools.ietf.org/html/draft-jiachen-icn-pubsub-00
+- BlueDove: A Scalable and Elastic Publish/Subscribe Service, IPDPS 2011, http://www.ece.sunysb.edu/~fanye/papers/IPDPS11.pdf
+- Elastic Scaling of a High-Throughput Content-Based Publish/Subscribe Engine, https://ieeexplore.ieee.org/document/6888932
+- Content Based Routing with Elvin4, https://pdfs.semanticscholar.org/b962/7968660c8299a8a48474c086682d5e0b42c7.pdf
+- Pietzuch, P., Bacon, J.: Hermes: a distributed event-based middleware architecture. In: ICDCS Workshops. pp. 611–618 (2002)
+- Rosenblum, D.S., Wolf, A.L.: A design framework for internet-scale event observation and notification. In: ESEC. pp. 344–360 (1997)
+- Siena: Scalable Internet Event Notification Architectures, https://www.inf.usi.ch/carzaniga/siena/
+- Gryphon: An Information Flow Based Approach to Message Brokering, https://arxiv.org/abs/cs/9810019
+- Ahmed, N., Linderman, M., Bryant, J.: Papas: Peer assisted publish and subscribe. In: Workshop on Middleware for Next Generation Internet Computing (MW4NG). pp. 7:1–7:6 (2012)
+- Li, M., Ye, F., Kim, M., Chen, H., Lei, H.: A scalable and elastic publish/subscribe service. In: IPDPS. pp. 1254–1265 (2011)
+- Zhang, B., Jin, B., Chen, H., Qin, Z.: Empirical evaluation of contentbased pub/sub systems over cloud infrastructure. In: Intl. Conference on Embedded and Ubiquitous Computing (EUC). pp. 81–88 (2010)
+
 
 <strong> Gossip Protocols </strong>
 
-Gossipsub is a gossip-based pubsub system developed within libp2p. Gossipsub borrows concepts from related literature (see list below) and blends them together to produce an efficient pubsub protocol. Traditionally, the concept behind gossiping is to address the issue of load-balancing between all nodes forwarding messages in the system. According to gossiping, once a node receives a message, it does not broadcast the message directly to all nodes subscribed to some topic, but instead it is choosing a fraction of nodes (we can use *t* to denote the number of nodes chosen) to distribute the message. In turn, those *t* nodes are choosing a further *t* nodes to distribute the message further. Clearly, receiving the message more than once is perfectly possible in gossiping systems. If a node receives a message twice, it discards the second (and any subsequent) message it receives.
+GossipSub is a gossip-based pubsub system developed within libp2p (see next section). Gossipsub borrows concepts from related literature (see list below) and blends them together to produce an efficient pubsub protocol. We are therefore providing a brief overview of how gossip-based approaches work.
+
+Traditionally, the concept behind gossiping is to address the issue of load-balancing between all nodes forwarding messages in the system. According to gossiping, once a node receives a message, it does not broadcast the message directly to all nodes subscribed to some topic, but instead it is choosing a fraction of nodes (we can use *d* to denote the number of nodes chosen) to distribute the message. In turn, those *d* nodes are choosing a further *d* nodes to distribute the message further. Clearly, receiving the message more than once is perfectly possible in gossiping systems. If a node receives a message twice, it discards the second (and any subsequent) message it receives.
 
 The intrinsic redundancy inserted in the system through gossiping is improving the resilience of the system. At the same time, in order to maintain redundancy, every node in the system has to keep membership information for the entire system. Although gossip-based protocols reduce the stress put in the system in terms of bandwidth and connectivity requirements, it clearly poses scalability concerns due to the state that all nodes need to keep.
 
 In order to overcome those issues, several gossip systems implement what is called *partial views*, according to which the following strategies can be used to propagate messages throughout the network:
 
-- <strong> Eager push: </strong> This is the traditional approach, where once nodes receive a message they forward the message (together with its payload) to a random set of *t* peers.
-- <strong> Pull: </strong> Nodes interested in a set of topics periodically send request messages to random nodes to inquire about newly received messages. If queried nodes have updates in the topic specified by the subscriber node, they forward the message to this nodee.
-- <strong> Lazy push: </strong> When a node (from within the *t* group of another node) receives a message, it forwards a message identifier (i.e., *not the payload of the message*) to a number of random peers. If those nodes have not already received the message, they send a subsequent pull request to get the full payload of the message.
+- <strong> Eager push: </strong> This is the traditional approach, where once nodes receive a message they forward the message (together with its payload) to a random set of *d* peers.
+- <strong> Pull: </strong> Nodes interested in a set of topics periodically send request messages to random nodes to inquire about newly received messages. If queried nodes have updates in the topic specified by the subscriber node, they forward the message to this node.
+- <strong> Lazy push: </strong> When a node (from within the *d* group of another node) receives a message, it forwards a message identifier (i.e., *not the payload of the message*) to a number of random peers. If those nodes have not already received the message, they send a subsequent pull request to get the full payload of the message.
 
 *Tradeoffs*
 
@@ -74,42 +137,28 @@ Related Literature
 - Emergent structure in unstructured epidemic multicast, DSN 2007
 
 
+### Within the libp2p Ecosystem
+> Existing attempts and strategies
+
+##### libp2p pubsub (floodsub, gossipsub & episub)
+
+- https://github.com/libp2p/specs/blob/master/pubsub/README.md
+- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/README.md
+- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/episub.md
+
+
 ##### peer-base collaboration messaging protocol (Dias Peer Set)
 
 - https://github.com/peer-base/peer-base/blob/master/docs/PROTOCOL.md#peer-base---protocol-explanation
 
-### Within the broad Research Ecosystem
-> How do people try to solve this problem?
 
-- We've collected a vast amount of Research Material around PubSub. It can be found at https://github.com/libp2p/research-pubsub
-
-Related literature in the broader research community has worked towards two incarnations of pubsub systems: i) content-based pubsub and ii) topic-based pubsub.
-
-<strong> Content-Based Pubsub </strong>
-
-In content-based pubsub, newly published content is tagged with a set of attribute/value pairs. In turn, subscriptions are expressed as predicates of the attributes. When predicates match attributes, the subscriber receives the information.
-
-Related literature
-
-- Pietzuch, P., Bacon, J.: Hermes: a distributed event-based middleware architecture. In: ICDCS Workshops. pp. 611–618 (2002)
-- Rosenblum, D.S., Wolf, A.L.: A design framework for internet-scale event observation and notification. In: ESEC. pp. 344–360 (1997)
-- Ahmed, N., Linderman, M., Bryant, J.: Papas: Peer assisted publish and subscribe. In: Workshop on Middleware for Next Generation Internet Computing (MW4NG). pp. 7:1–7:6 (2012)
-- Li, M., Ye, F., Kim, M., Chen, H., Lei, H.: A scalable and elastic publish/subscribe service. In: IPDPS. pp. 1254–1265 (2011)
-- Zhang, B., Jin, B., Chen, H., Qin, Z.: Empirical evaluation of contentbased pub/sub systems over cloud infrastructure. In: Intl. Conference on Embedded and Ubiquitous Computing (EUC). pp. 81–88 (2010)
-
-<strong> Topic-Based Pubsub </strong>
-
-In contrast, in topic-based pubsub systems, subscribers declare interest in some topic. Publishers add/tag topics to their publication and those topics that match subscribers' interests are broadcast to them. Depending on the nature of the application running on top, topic-based pubsub can reduce the complexity of the system.
-
-Related Literature
-
-- Eugster, P.T., Felber, P.A., Guerraoui, R., Kermarrec, A.M.: The many faces of publish/subscribe. ACM Comput. Surv. 35(2), 114–131 (2003)
-- Zhao, Y., Kim, K., Venkatasubramanian, N.: Dynatops: A dynamic topicbased publish/subscribe architecture. In: DEBS. pp. 75–86 (2013)
-- Julien Gascon-Samson, Franz-Philippe Garcia, Bettina Kemme, Jörg Kienzle, Dynamoth: A Scalable Pub/Sub Middleware for Latency-Constrained Applications in the Cloud, IEEE ICDCS 2015
 
 
 ### Known shortcommins of existing solutions
 > What are the limitations on those solutions?
+
+The scale required by systems such as name registry propagation in IPNS, or request routing in filecoin and transaction routing in ETH2.0 can be orders of magnitude higher than the systems tested in the past for unstructured, unmanaged P2P overlays. Node churn can also be significant, but we expect that a 30% threshold should be acceptable.
+
 
 ## Solving this Open Problem
 
