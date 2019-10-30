@@ -120,9 +120,9 @@ The intrinsic redundancy inserted in the system through gossiping is improving t
 
 In order to overcome those issues, several gossip systems implement what is called *partial views*, according to which the following strategies can be used to propagate messages throughout the network:
 
-- <strong> Eager push: </strong> This is the traditional approach, where once nodes receive a message they forward the message (together with its payload) to a random set of *d* peers.
-- <strong> Pull: </strong> Nodes interested in a set of topics periodically send request messages to random nodes to inquire about newly received messages. If queried nodes have updates in the topic specified by the subscriber node, they forward the message to this node.
-- <strong> Lazy push: </strong> When a node (from within the *d* group of another node) receives a message, it forwards a message identifier (i.e., *not the payload of the message*) to a number of random peers. If those nodes have not already received the message, they send a subsequent pull request to get the full payload of the message.
+- **Eager push:** This is the traditional approach, where once nodes receive a message they forward the message (together with its payload) to a random set of *d* peers.
+- **Pull:** Nodes interested in a set of topics periodically send request messages to random nodes to inquire about newly received messages. If queried nodes have updates in the topic specified by the subscriber node, they forward the message to this node.
+- **Lazy push:** When a node (from within the *d* group of another node) receives a message, it forwards a message identifier (i.e., *not the payload of the message*) to a number of random peers. If those nodes have not already received the message, they send a subsequent pull request to get the full payload of the message.
 
 *Tradeoffs*
 
