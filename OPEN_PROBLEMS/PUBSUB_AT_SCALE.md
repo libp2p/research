@@ -56,7 +56,7 @@ General purpose pub/sub messaging systems can prove very useful from several dif
 
 Related literature in the broader research community has worked towards two incarnations of pubsub systems: i) topic-based pub/sub and ii) content-based pub/sub.
 
-<strong> Topic-Based Pubsub </strong>
+**Topic-Based Pubsub**
 
 In topic-based pubsub systems, subscribers declare interest in some topic. Publishers add/tag topics to their publication and those topics that match subscribers' interests are broadcast to them. Depending on the nature of the application running on top, topic-based pubsub can reduce the complexity of the system.
 
@@ -88,7 +88,7 @@ Related Literature
 
 
 
-<strong> Content-Based Pubsub </strong>
+**Content-Based Pubsub**
 
 In content-based pubsub, newly published content is tagged with a set of attribute/value pairs. In turn, subscriptions are expressed as predicates of the attributes. When predicates match attributes, the subscriber receives the information. Content-based pub/sub systems have been extensively studied in the past, but also more recently in the context of Information-Centric Networks. Generally speaking, content-based (or sometimes called attribute-based) pub/sub systems *can provide finer granularity matching between publishers and subscribers, but in order to achieve this they require more compute resources*. 
 
@@ -110,7 +110,7 @@ Related literature
 - Zhang, B., Jin, B., Chen, H., Qin, Z.: Empirical evaluation of contentbased pub/sub systems over cloud infrastructure. In: Intl. Conference on Embedded and Ubiquitous Computing (EUC). pp. 81–88 (2010)
 
 
-<strong> Gossip Protocols </strong>
+**Gossip-based Pub/Sub**
 
 GossipSub is a gossip-based pubsub system developed within libp2p (see next section). Gossipsub borrows concepts from related literature (see list below) and blends them together to produce an efficient pubsub protocol. We are therefore providing a brief overview of how gossip-based approaches work.
 
@@ -154,7 +154,7 @@ Related Literature
 
 
 
-### Known shortcommins of existing solutions
+### Known shortcomings of existing solutions
 > What are the limitations on those solutions?
 
 The scale required by systems such as name registry propagation in IPNS, or request routing in filecoin and transaction routing in ETH2.0 can be orders of magnitude higher than the systems tested in the past for unstructured, unmanaged P2P overlays. Node churn can also be significant, but we expect that a 30% threshold should be acceptable.
