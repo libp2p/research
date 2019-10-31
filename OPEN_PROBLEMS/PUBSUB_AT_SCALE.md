@@ -142,10 +142,21 @@ Related Literature
 
 ##### libp2p pubsub (floodsub, gossipsub & episub)
 
-- https://github.com/libp2p/specs/blob/master/pubsub/README.md
-- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/README.md
-- https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/episub.md
+For a detailed description of the pubsub protocols currently used, or currently implemented in order to be used in the near future, please follow the links below. Here we provide a brief description of the three main versions of pubsub in libp2p. In particular, floodsub was initially implemented and used, but had poor scalability properties and bandwidth requirements. Gossipsub is currently been used and Episub is currently being implemented to improve performance by proximity aware epidemic broadcast.
 
+- PubSub Implementation: https://github.com/libp2p/specs/blob/master/pubsub/README.md
+- Floodsub and Gossipsub: https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/README.md
+- Episub: https://github.com/libp2p/specs/blob/master/pubsub/gossipsub/episub.md
+
+The initial pubsub experiment in libp2p was floodsub. It implements pubsub in the most basic manner, with two defining aspects: i) ambient peer discovery; and ii)  most basic routing: flooding. In ambient peer discovery, the task of finding peers is not part of the protocol, but instead provided by external means, e.g., using the DHT. The system works well with floodsub when the network size is small. It can propagate messages with minimum latency, *but* it has got prohibitively high overehead.
+
+Further experimentation resulted in what was called *randomsub*, according to which nodes are randomly forwarding messages to a subset of peers within a topic. This reduces a lot the amount of traffic, but is non-deterministic, resulting in route instability. *Meshsub* was constructed as an optimisation to *randomsub*. According to meshsub, instead of randomly selecting peers on a per message basis, meshsub forms an overlay mesh where each peer forwards to a subset of its peers on a *stable basis*. The overlay is initially constructed in a random fashion, based only on topics.
+
+The *meshsub* router offers a baseline construction with good amplification control properties, which has been augmented with gossip about message flow, *aka gossipsub*. The gossip is emitted to random subsets of peers not in the mesh. Using gossip messages we can propagate metadata about message flow throughout the network. The metadata can be arbitrary, but as a baseline we include the message IDs that the router emitting the gossip has seen in the last few seconds. The router can use this metadata to improve the mesh and create epidemic broadcast trees.
+
+Essentially, *gossipsub is a blend of meshsub for data and randomsub for mesh metadata*. Gossipsub provides bounded degree and amplification factor with the *meshsub* construction and augments it using gossip propagation of metadata with the *randomsub* technique.
+
+The optimisation to gossipsub, which is currently in implementation is *episub*, a protocol that implements epidemic broadcast trees, but inserts a proximity factor, which is expected to improve performance significantly.
 
 ##### peer-base collaboration messaging protocol (Dias Peer Set)
 
