@@ -60,11 +60,11 @@ There has also been discussion within the libp2p and IPFS ecosystems for a *Mult
 
 Peer-to-Peer networks have received tremendous attention by the networking research community in the last 15 years or so, with interest generally declining over time. As discussed earlier, P2P networks have generally been divided in two main categories: "structured" and "unstructured". Here we will focus on structured P2P overlay networks, as the P2P system implemented in libp2p falls in this category and would not see any performance benefit if it moved to an unstructured network. We will briefly survey the most prominent proposals for routing in structured P2P networks, where the dominating approach has always been the use of a DHT table. The specifics of the DHT table itself as well as the structure of the overall system differentiates the proposals in terms of features and performance. For a comprehensive review of P2P Overlay Networks you are strongly encouraged to look at the following papers:
 
-[A Survey and Comparison of Peer-to-Peer Overlay Network Schemes](http://snap.stanford.edu/class/cs224w-readings/lua04p2p.pdf), IEEE Communications Surveys & Tutorials, March 2004
-[State-of-the-art survey on P2P overlay networks in pervasive computing environments](https://www.sciencedirect.com/science/article/pii/S1084804515000879), Journal of Network and Computer Applications
+- [A Survey and Comparison of Peer-to-Peer Overlay Network Schemes](http://snap.stanford.edu/class/cs224w-readings/lua04p2p.pdf), IEEE Communications Surveys & Tutorials, March 2004
+- [State-of-the-art survey on P2P overlay networks in pervasive computing environments](https://www.sciencedirect.com/science/article/pii/S1084804515000879), Journal of Network and Computer Applications
 Volume 55, September 2015, Pages 1-23
-[A Survey on content-oriented networking for efficient content delivery](https://ieeexplore.ieee.org/abstract/document/5723809), IEEE Communications Magazine, DOI: 10.1109/MCOM.2011.5723809
-[A Survey of Peer-to-Peer Security Issues](https://www.cs.rice.edu/~dwallach/pub/tokyo-p2p2002.pdf), 2003.
+- [A Survey on content-oriented networking for efficient content delivery](https://ieeexplore.ieee.org/abstract/document/5723809), IEEE Communications Magazine, DOI: 10.1109/MCOM.2011.5723809
+- [A Survey of Peer-to-Peer Security Issues](https://www.cs.rice.edu/~dwallach/pub/tokyo-p2p2002.pdf), 2003.
 
 1) CAN: Content Addressable Network (2001)
 
