@@ -158,52 +158,56 @@ Essentially, *gossipsub is a blend of meshsub for data and randomsub for mesh me
 
 The optimisation to gossipsub, which is currently in implementation is *episub*, a protocol that implements epidemic broadcast trees, but inserts a proximity factor, which is expected to improve performance significantly.
 
+
 ##### peer-base collaboration messaging protocol (Dias Peer Set)
 
 - https://github.com/peer-base/peer-base/blob/master/docs/PROTOCOL.md#peer-base---protocol-explanation
 
 
-
-
 ### Known shortcomings of existing solutions
 > What are the limitations on those solutions?
 
-The scale required by systems such as name registry propagation in IPNS, or request routing in filecoin and transaction routing in ETH2.0 can be orders of magnitude higher than the systems tested in the past for unstructured, unmanaged P2P overlays. Node churn can also be significant, but we expect that a 30% threshold should be acceptable.
+The scale required by systems such as name registry propagation in IPNS as the IPFS network grows exponentially, or request routing in filecoin and transaction routing in ETH2.0 can be orders of magnitude higher than the systems tested in the past for unstructured, unmanaged P2P overlays.
 
+*Performance Evaluation and Scalability*
+
+The current implementation of pub/sub (i.e., gossipsub) has been shown to perform well and is expected to scale to millions of nodes. Gossipsub provides bounded degree and amplification factor with the *meshsub* construction and augments it using gossip propagation of metadata with the *randomsub* technique. A thorough performance evaluation is currently been carried out and results will be reported soon. Gossipsub has its own simulator, which can be found here: https://github.com/vyzo/gerbil-simsub.
+
+However, it is not clear what are the properties and performance guarantees that gossipsub and episub can provide for: i) orders of magnitude higher nodes, ii) latency-sensitive applications (e.g., ETH2.0/filecoin transaction data), iii) message re-ordering and its impact.
+
+These are not necessarily known shortcomings, but rather unknown factors that have to be thoroughly tested.
 
 ## Solving this Open Problem
 
-As mentioned earlier, there are several tradeoffs at play in the design of the system. Those tradeoffs are made more serious as scalability requirements come into the picture, that is, as the protocols is requested to serve orders of magnitude more users and more pubsub topics. Below, we provide a very brief description of the main issues that a sophisticated pubsub protocol needs to be able to deal with.
+As mentioned earlier, there are several tradeoffs at play in the design of the system. Those tradeoffs are made more serious as scalability requirements come into the picture, that is, as the protocol is requested to serve orders of magnitude more users and more pubsub topics. Below, we provide a very brief description of **the main challenges and requirements** that a sophisticated pubsub protocol needs to be able to deal with.
 
 - *Load-balancing:* Keeping membership state and forwarding pubsub messages is loading both the memory and communication/networking requirements of a node. This is especially so for p2p systems, where end-nodes are not necessarily powerful servers. Furthermore, as some content is becoming popular, more load is put on the nodes that are relaying those messages. *A sophisticated (gossiping) pubsub protocol needs to be able to balance load among nodes.*
 
-- *Latency:* Some applications require that messages are delivered to all nodes subscribed to a topic with the least possible delay. As pubsub systems are built as overlays on top of the physical Internet infrastructure, the underlying hop-count does not necessarily correspond to the overlay picture. Furthermore, approaches such as "eager-push" or "flooding" can reduce the delivery latency, but increase bandwidth requirements.
+- *Latency:* Some applications require that messages are delivered to all nodes subscribed to a topic with the least possible delay. As pubsub systems are built as overlays on top of the physical Internet infrastructure, the underlying hop-count does not necessarily correspond to the overlay picture. Furthermore, approaches such as "eager-push" or "flooding" can reduce the delivery latency, but increase bandwidth requirements. *Latency to inform subscribed nodes should be bounded to acceptable levels, which are defined by the applications running on top.*
 
 - *Authentication:* Whether a pubsub system is open to the public or not, there needs to be some authentication to those that publish to specific topics/channels. As such, there has been discussion (e.g., in https://github.com/ipfs/notes/issues/236) about a pubsub authentication API. According to this, every topic is signed by a public key. Anyone can subscribe to this key, but those that want to publish information to this key/topic need to sign the content with the corresponding private key. In case of a private pubsub system, content can be encrypted and the corresponding keys to decrypt the content should be shared with those that are allowed access to the topics. *Content published in pubsub systems need to be authenticated and in case of a private pubsub system the content itself needs to be encrypted using authenticated encryption.*
 
 - *Scalability:* The ultimate issue that comprises a challenge of its own is to be able to scale up and support orders of magnitude more users/nodes. As more nodes join the system, both bandwidth and networking resources increase accordingly. That said, the scalability challenge encompasses all of the issues discussed above. *A sophisticated pubsub system should be able to support orders of magnitude more nodes, but at the same time take care of load-balancing between nodes and latency requirements of corresponding applications.*
 
+- *Node Churn:* A significant challenge in unstructured, unmanaged P2P overlay networks is the fact that nodes are not dedicated to the overlay, but rather can join and leave the network at random points. Node churn can impact significantly the system performance and can have catastrophic events if it is extensive. *We expect that an algorithm that can sustain a 30% threshold of node churn will be able to meet application requirements.*
+
 ### What is the impact
 
-As the IPFS network grows and dependency on underlying libp2p (and supporting protocols) intensifies, we need to make sure that the design of the protocols is able to scale up and maintain performance.
+As the IPFS network grows and dependency on underlying libp2p (and supporting protocols) intensifies, we need to make sure that the design of the protocols is able to scale up and maintain performance. The libp2p pub/sub system is increasingly being adopted by several applications, many of them with strict requirements including latency guarantees. Failure to deal with the above-mentioned challenges and meet the requirements can render whole systems unusable or risky. This is especially so for applications that transfer monetary value (e.g., ETH2.0 and filecoin).
 
 
-### What defines a complete solution?
-> What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
+  ### What defines a complete solution?
+  > What hard constraints should it obey? Are there additional soft constraints that a solution would ideally obey?
 
 
-In recent years, there has been significant momentum for design and deployment of decentralised Internet services and applications. Among others, such services include distributed and decentralised storage but also computation systems. The aim is to replace, or complement traditional centrally managed and operated cloud services. End-users are contributing part of their resources to the network and get rewarded according to contribution. These emerging systems are distributed in the sense of geographical spread and decentralised from the point of view of ownership, management and operation.
+  In recent years, there has been significant momentum for design and deployment of decentralised Internet services and applications. Among others, such services include distributed and decentralised storage but also computation systems. The aim is to replace, or complement traditional centrally managed and operated cloud services. End-users are contributing part of their resources to the network and get rewarded according to contribution. These emerging systems are distributed in the sense of geographical spread and decentralised from the point of view of ownership, management and operation.
 
-We are, therefore, witnessing a trend towards building P2P overlays, where, in most cases, unreliable and non-dedicated end-user devices are active contributors to the network. In the absence of central control,  messaging in those systems is of utmost importance in order to communicate operational processes (e.g., find file or execute function), but also propagate management events.
+  We are, therefore, witnessing a trend towards building P2P overlays, where, in most cases, unreliable and non-dedicated end-user devices are active contributors to the network. In the absence of central control,  messaging in those systems is of utmost importance in order to communicate operational processes (e.g., find file or execute function), but also propagate management events.
 
-Pub/Sub has seen a surge in usage from distributed applications in the area of decentralised services, such as distributed chat, collaborative editing tools without a backend server, hosting of dynamic website content in unmanaged P2P networks, storage and synchronisation of evolving datasets, to name a few.
+  Pub/Sub has seen a surge in usage from distributed applications in the area of decentralised services, such as distributed chat and social networks (e.g., Mastodon), collaborative editing tools without a backend server (e.g., PeerPad), hosting of dynamic website content in unmanaged P2P networks (e.g., websites on IPFS), video-on-demand platforms (e.g., D-Tube), storage and synchronisation of evolving datasets (e.g., transaction data in distributed ledgers), to name a few.
 
-Support for multiple times of usage:
-- Blog
-- Social Network
-- Chat
-- Newschannel
-- Video Broadcast
+  Those systems are growing exponentially and if they reach the adoption of their current (centralised) alternatives, they will have user-bases of tens or even hundreds of millions of users. Reputation algorithms for stable nodes can act as an optimisation to the fact that these networks are unmanaged, but distributed reputation systems (and the security therein) has traditionally been a notorious challenge to overcome.
+
 
 ## Other
 
