@@ -163,6 +163,7 @@ The optimisation to gossipsub, which is currently in implementation is *episub*,
 
 - https://github.com/peer-base/peer-base/blob/master/docs/PROTOCOL.md#peer-base---protocol-explanation
 
+There has been some discussion around the peer-base collaboration protocol. This protocol is building collaboration hashrings between nodes in the P2P overlay. It implements a simple way of building a membership base through gossip messages and adding/removing nodes from the hashring. Then there is the collaboration part of the protocol, which is composed of a push and a pull mode of operation. When a node initiates a connection, it is "pushing" information, whereas when a node is receiving a connection request it is "pulling" information.
 
 ### Known shortcomings of existing solutions
 > What are the limitations on those solutions?
@@ -173,7 +174,7 @@ The scale required by systems such as name registry propagation in IPNS as the I
 
 The current implementation of pub/sub (i.e., gossipsub) has been shown to perform well and is expected to scale to millions of nodes. Gossipsub provides bounded degree and amplification factor with the *meshsub* construction and augments it using gossip propagation of metadata with the *randomsub* technique. A thorough performance evaluation is currently been carried out and results will be reported soon. Gossipsub has its own simulator, which can be found here: https://github.com/vyzo/gerbil-simsub.
 
-However, it is not clear what are the properties and performance guarantees that gossipsub and episub can provide for: i) orders of magnitude higher nodes, ii) latency-sensitive applications (e.g., ETH2.0/filecoin transaction data), iii) message re-ordering and its impact.
+However, it is not clear what are the properties and performance guarantees that gossipsub and episub can provide for: i) orders of magnitude higher nodes, ii) latency-sensitive applications (e.g., ETH2.0 and filecoin transaction data), iii) message re-ordering and its impact.
 
 These are not necessarily known shortcomings, but rather unknown factors that have to be thoroughly tested.
 
