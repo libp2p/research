@@ -76,7 +76,7 @@ S.  Ratnasamy,  P.  Francis,  M.  Handley,  R.  Karp,  and  S.  Shenker,  [“A 
 
 Chord is also one of the very early proposals that use DHTs, but is building on consistent hashing to allocate keys to the peers forming the ring. By using consistent hashing, Chord can deal effectively with load-balancing between nodes, as well as limited churn rates. It has been shown to drop in performance under increased churn rates, as well as sub-optimal look-up times.
 
-I. Stoica, R. Morris, D. Karger, M. F. Kaashoek, and H. Balakrishnan,[“Chord:  A  scalable  peer-to-peer  lookup  protocol  for  internet  applications”](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf), IEEE/ACM Transactions on Networking, vol. 11, no. 1, pp. 17–32, 2003.
+I. Stoica, R. Morris, D. Karger, M. F. Kaashoek, and H. Balakrishnan, [“Chord:  A  scalable  peer-to-peer  lookup  protocol  for  internet  applications”](https://pdos.csail.mit.edu/papers/ton:chord/paper-ton.pdf), IEEE/ACM Transactions on Networking, vol. 11, no. 1, pp. 17–32, 2003.
 
 3) Pastry (2001) & Tapestry (2004)
 
@@ -84,7 +84,7 @@ Both Pastry and Tapestry use the Plaxton (1997) prefix routing scheme to provide
 
 A. Rowstron and P. Druschel, [Pastry: Scalable, decentralized object location and routing for large-scale peer-to-peer systems](https://www.cs.rice.edu/~druschel/publications/Pastry.pdf), in Proceedingsof the Middleware, 2001.
 
-B. Y. Zhao, L. Huang, J. Stribling, S. C. Rhea, A. D. Joseph, and J. D. Kubiatowicz,  [“Tapestry:  A  resilient  global-scale  overlay  for  service deployment”](https://www.srhea.net/papers/tapestry_jsac.pdf), IEEE  Journal  on  Selected  Areas  in  Communications,vol. 22, no. 1, pp. 41–53, January 2004.
+B. Y. Zhao, L. Huang, J. Stribling, S. C. Rhea, A. D. Joseph, and J. D. Kubiatowicz, [“Tapestry:  A  resilient  global-scale  overlay  for  service deployment”](https://www.srhea.net/papers/tapestry_jsac.pdf), IEEE  Journal  on  Selected  Areas  in  Communications,vol. 22, no. 1, pp. 41–53, January 2004.
 
 C. Plaxton, R. Rajaraman, and A. Richa, [“Accessing nearby copies ofreplicated objects in a distributed environment,”](https://dl.acm.org/citation.cfm?id=258523), in Proceedings of the 9th Annual ACM Symposium on Parallel Algorithms and Architectures,1997 [slides](http://homepage.divms.uiowa.edu/~ghosh/8.Plaxton.pdf)
 
@@ -152,7 +152,7 @@ In terms of scalability, a Multi-Layer DHT should be constructed, which should i
 In addition to the name-resolution based system currently deployed (through the DHT system), we should involve an element of name-based routing (where possible) in order to avoid hitting the DHT with every request. This could be an extension of the IPFS gateway, or a proposal for a separate network entity. Recall that DHTs are by design stochastically suboptimal, as the overlay structure does not necessarily represent the network topology (i.e., one hop on the DHT could translate to tens of network-layer router hops) and therefore delivery delay increases.
 
 A very recent related paper discussing those issues is here:
-[Towards Peer-to-Peer Content Retrieval Markets:Enhancing IPFS with ICN](https://conferences.sigcomm.org/acm-icn/2019/proceedings/icn19-34.pdf), ACM ICN 2019.
+[Towards Peer-to-Peer Content Retrieval Markets: Enhancing IPFS with ICN](https://conferences.sigcomm.org/acm-icn/2019/proceedings/icn19-34.pdf), ACM ICN 2019.
 
 ### What is the impact
 
