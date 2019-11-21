@@ -135,7 +135,7 @@ Surveys on the topic
 - A Survey of Information-Centric Networking Research (2013), https://ieeexplore.ieee.org/abstract/document/6563278
 - A Survey of Information-Centric Networking (2012), https://ieeexplore.ieee.org/abstract/document/6231276
 
-### Known shortcommins of existing solutions
+### Known shortcomings of existing solutions
 > What are the limitations on those solutions?
 
 All of the above-mentioned approaches, both in P2P and in the ICN space are facing scalability issues. This is primarily due to the vast amount of content items that need to be reachable. In the case of P2P systems, the proposals discussed above were modelling systems with less users and much less traffic. Since then (early 2000s), the Internet, both in terms of numbers of connected nodes and in terms of volume of data, has grown tremendously. IPFS for instance is already counting more users in the order of hundreds of thousands and is not considered one of the very big systems of today.
